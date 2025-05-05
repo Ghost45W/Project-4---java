@@ -1,0 +1,182 @@
+import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
+
+import java.io.*;
+import java.util.*;
+
+
+//TIP To <b>Run</b> code, press <shortcut actionId="Run"/> or
+// click the <icon src="AllIcons.Actions.Execute"/> icon in the gutter.
+public class Main {
+    static File data = new File("C:\\Users\\Noah Wright\\Desktop\\project4\\data.json");
+    static BufferedReader br;
+    static {
+        try {
+            br = new BufferedReader(new FileReader(data));
+        } catch (FileNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+
+    }
+
+    public static void main(String[] args) throws IOException {
+        Scanner input = new Scanner(System.in);
+        List<Task> todolist = new ArrayList<>();
+
+        String userInput = "";
+        String STOP = "stop";
+        String NEW = "new";
+        String LIST = "list";
+        //constants for list
+        String ALL =  "all";
+        String PRIORITY = "priority";
+        String REMOVE = "remove";
+        String UPDATE = "update";
+        String ZERO = "0";
+        String ONE = "1";
+        String TWO = "2";
+        String THREE = "3";
+        String FOUR = "4";
+        String FIVE = "5";
+
+        //code starts
+        while (!userInput.equalsIgnoreCase(STOP)){
+            if (userInput.equalsIgnoreCase(NEW)) {
+                System.out.println("What is the name of your task?");
+                String name = input.nextLine();
+                System.out.println("What is a description of your task?");
+                String description = input.nextLine();
+
+                //add exception handling
+                int priority = 0;
+                boolean pass = false;
+                while(!pass){
+                    try {
+
+                        System.out.println("What is the priority of your task, ( 0 - 5 ) 5 being the highest?");
+                        priority = input.nextInt();
+                        pass = true;
+                    } catch(Exception e){
+                        System.out.println("oh man");
+                        input.nextLine();
+                    }
+                }
+                input.nextLine();
+                Task newtask = new Task(name, description, priority);
+                todolist.add(newtask);
+            }
+            if (userInput.equalsIgnoreCase(LIST)){
+                System.out.println("Type 'all' to display all or 'priority' to sort by priority");
+                userInput = input.nextLine();
+                if (userInput.equalsIgnoreCase(ALL)){
+                    todolist.sort(new SortByPriority());
+                    for (Task x :todolist){
+                        x.display();
+
+                    }
+                }
+                if (userInput.equalsIgnoreCase(PRIORITY)) {
+                    System.out.println("What priority task's would you like to display");
+                    userInput = input.nextLine();
+                    todolist.sort(new SortByPriority());
+                    if (userInput.equalsIgnoreCase(ZERO)){
+                        for (Task x :todolist){
+                           if (x.getPriority() == 0){
+                               x.display();
+                           }
+                        }
+                    }if (userInput.equalsIgnoreCase(ONE)){
+                        for (Task x :todolist){
+                            if (x.getPriority() == 1){
+                                x.display();
+                            }
+                        }
+                    }if (userInput.equalsIgnoreCase(TWO)){
+                        for (Task x :todolist){
+                            if (x.getPriority() == 2){
+                                x.display();
+                            }
+                        }
+                    }if (userInput.equalsIgnoreCase(THREE)){
+                        for (Task x :todolist){
+                            if (x.getPriority() == 3){
+                                x.display();
+                            }
+                        }
+                    }if (userInput.equalsIgnoreCase(FOUR)){
+                        for (Task x :todolist){
+                            if (x.getPriority() == 4){
+                                x.display();
+                            }
+                        }
+                    }if (userInput.equalsIgnoreCase(FIVE)){
+                        for (Task x :todolist){
+                            if (x.getPriority() == 5){
+                                x.display();
+                            }
+                        }
+                    }
+                }
+
+            }
+            if (userInput.equalsIgnoreCase(UPDATE)){
+                System.out.println("What task would you like to update?");
+                userInput = input.nextLine();
+                for (Task x: todolist){
+                    if (userInput.equalsIgnoreCase(x.getName())){
+                        todolist.remove(x);
+                        System.out.println("What is the new name of your task?");
+                        String name = input.nextLine();
+                        System.out.println("What is the new description of your task?");
+                        String description = input.nextLine();
+                        //add exception handling
+                        int priority = 0;
+                        boolean pass = false;
+                        while(!pass){
+                            try {
+
+                                System.out.println("What is the priority of your task, ( 0 - 5 ) 5 being the highest?");
+                                priority = input.nextInt();
+                                pass = true;
+                            } catch(Exception e){
+                                System.out.println("oh man");
+                                input.nextLine();
+                            }
+                        }
+                        input.nextLine();
+                        input.nextLine();
+                        Task newtask = new Task(name, description, priority);
+                        todolist.add(newtask);
+                    }
+                }
+            }
+            if (userInput.equalsIgnoreCase(REMOVE)) {
+                System.out.println("What is the name of the task you'd like to remove?");
+                userInput = input.nextLine();
+                for (Task x : todolist){
+                    if (userInput.equalsIgnoreCase(x.getName())){
+                        todolist.remove(x);
+                    }
+                }
+            }
+
+            if (userInput.equalsIgnoreCase(STOP)){
+                try(
+                Writer writer = new FileWriter("data.json")) {
+                    Gson gson = new GsonBuilder().create();
+                    gson.toJson(todolist, writer);
+                }
+                break;
+            }
+
+                System.out.println("Enter 'stop' to quit, 'new' to enter a new task, or list to display any other tasks.");
+                userInput = input.nextLine();
+
+
+        }
+
+    }
+
+}
+
+
